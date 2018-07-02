@@ -1,0 +1,222 @@
+<!doctype html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+	<title>Async</title>
+
+	<link rel="stylesheet" href="css/reveal.css">
+	<link rel="stylesheet" href="css/theme/moon.css">
+
+	<!-- Theme used for syntax highlighting of code -->
+	<link rel="stylesheet" href="lib/css/zenburn.css">
+
+	<style>
+		.audio-controls {
+			display: none;
+		}
+	</style>
+
+	<!-- Printing and PDF exports -->
+	<script>
+		var link = document.createElement('link');
+		link.rel = 'stylesheet';
+		link.type = 'text/css';
+		link.href = window.location.search.match(/print-pdf/gi) ? 'css/print/pdf.css' : 'css/print/paper.css';
+		document.getElementsByTagName('head')[0].appendChild(link);
+	</script>
+</head>
+
+<body>
+	<div class="reveal">
+		<div class="slides">
+			<section>
+				<h1>Async (in JS)</h1>
+				<h3 class="fragment">... or Why I Need to Care?</h3>
+				<p>
+					<small>
+						by Rahadian Yusuf
+					</small>
+				</p>
+			</section>
+			<section>
+				<h2>下午好</h2>
+				<p class="fragment">
+					That means, "Good Afternoon"
+				</p>
+
+				<p class="fragment" style="font-size: 18px">according to Google Translate (duh)</p>
+
+				<aside class="notes">
+					Selamat Sore!
+				</aside>
+			</section>
+			<section>
+				<h2>Why Asynchronous?</h2>
+				<p class="fragment">
+					<small>according to Asim Hussein</small>
+				</p>
+				<ul>
+					<li class="fragment">Blocking is an idea we invent</li>
+					<li class="fragment">Hardware is non-blocking</li>
+					<li class="fragment">Non-blocking is better for performance.</li>
+					<li class="fragment">Therefore, async is better.</li>
+				</ul>
+
+				<aside class="notes">
+					Blocking is an idea we invented to make writing software easier. CPU: Hard drive, please get me this file. (Then CPU do other
+					stuffs) (Hard drive loads the file into RAM) Hard drive: (slap) Hey, Mr. CPU, your file is ready in the RAM.
+				</aside>
+			</section>
+			<section>
+				<section>
+					<h2>How to Become Asynchronous</h2>
+
+					<ol>
+						<li class="fragment">Thread</li>
+						<li class="fragment">Event</li>
+					</ol>
+
+					<aside class="notes">
+						Selamat Sore!
+					</aside>
+				</section>
+				<section>
+					<h2>How to Become Asynchronous: Thread</h2>
+
+					<ol>
+						<li class="fragment">Thread are just processes with shared memory</li>
+						<li class="fragment">Shared memory => race condition</li>
+						<li class="fragment">Using locks mean deadlocks/livelocks</li>
+						<li class="fragment">When a thread block, switch to other thread.</li>
+					</ol>
+
+					<aside class="notes">
+						Threads are hard to get right! (Beware of race condition) Multi-Threading is Hard! Thread are just processes with shared
+						memory Shared memory => race condition Using locks mean deadlocks/livelocks When a thread block, switch to other thread.
+					</aside>
+				</section>
+				<section>
+					<h2>How to Become Asynchronous: Event</h2>
+
+					<pre><code class="hljs" data-trim>
+// macOS, Linux, and Windows
+fs.readFile('&lt;directory&gt;', (err, data) =&gt; {
+// =&gt; [Error: EISDIR: illegal operation on a directory, read &lt;directory&gt;]
+});
+						</code></pre>
+					<aside class="notes">
+						Threads are hard to get right! (Beware of race condition) Multi-Threading is Hard! Thread are just processes with shared
+						memory Shared memory => race condition Using locks mean deadlocks/livelocks When a thread block, switch to other thread.
+					</aside>
+				</section>
+			</section>
+			<section>
+				<h2>How We Handle Asynchronous</h2>
+				<p class="fragment">
+					#1: Use Callback
+				</p>
+
+				<div style="position: relative">
+					<pre class="fragment" style="position: absolute">
+									<code class="hljs" data-trim>
+			// Make it async
+			function doAsyncTask(cb) {
+			  cb();
+			}
+			
+			doAsyncTask(_ => console.log(message));
+			let message = "Callback Called";
+									</code>
+								</pre>
+
+					<pre class="fragment" style="position: absolute">
+									<code class="hljs" data-trim>
+			// Make it async with setImmediate
+			function doAsyncTask(cb) {
+			  setImmediate(() => {
+			    console.log('Async Task Calling Callbacks');
+			    cb();
+			  })
+			}
+			
+			doAsyncTask(_ => console.log(message));
+			let message = "Callback Called";
+									</code>
+								</pre>
+				</div>
+				<aside class="notes">
+					Coba tanpa pindahinn variabel message -nya
+				</aside>
+			</section>
+			<section>
+				<h2>What if we want to sequencially call callbacks?</h2>
+			</section>
+			<section>
+				<h2>Callback Hell!</h2>
+
+				<pre class="fragment">
+					<code class="hljs js" data-trim>
+
+    function doAsyncTask(cb) {
+      setImmediate(() => {
+        console.log("Async Task Calling Callback");
+        cb();
+      });
+    }
+    
+    // Sadarkan aku Tuhan... !
+    doAsyncTask(() => {
+      doAsyncTask(() => {
+        doAsyncTask(() => {
+          doAsyncTask(() => {
+            doAsyncTask(() => {
+              doAsyncTask(() => {
+                doAsyncTask(() => {
+                  doAsyncTask(() => {
+                    doAsyncTask(() => {
+                      doAsyncTask(() => {});
+                    });
+                  });
+                });
+              });
+            });
+          });
+        });
+      });
+    });
+					</code>
+				</pre>
+				<aside class="notes">
+ 					If we want to run callbacks in sequence, we need to nest it. It can lead to… Callback Hell!
+				</aside>
+			</section>
+		</div>
+	</div>
+
+	<script src="lib/js/head.min.js"></script>
+	<script src="js/reveal.js"></script>
+
+	<script>
+		// More info about config & dependencies:
+		// - https://github.com/hakimel/reveal.js#configuration
+		// - https://github.com/hakimel/reveal.js#dependencies
+		Reveal.initialize({
+			dependencies: [
+				{ src: 'plugin/markdown/marked.js' },
+				{ src: 'plugin/markdown/markdown.js' },
+				{ src: 'plugin/notes/notes.js', async: true },
+				{ src: 'plugin/highlight/highlight.js', async: true, callback: function () { hljs.initHighlightingOnLoad(); } },
+				// { src: 'plugin/audio-slideshow/slideshow-recorder.js', condition: function () { return !!document.body.classList; } },
+				// { src: 'plugin/audio-slideshow/audio-slideshow.js', condition: function () { return !!document.body.classList; } },
+			],
+			// audio: {
+			// 	autoplay: true,
+			// }
+		});
+	</script>
+</body>
+
+</html>
