@@ -1,222 +1,493 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
 
 <head>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-
-	<title>Async</title>
-
-	<link rel="stylesheet" href="css/reveal.css">
-	<link rel="stylesheet" href="css/theme/moon.css">
-
-	<!-- Theme used for syntax highlighting of code -->
-	<link rel="stylesheet" href="lib/css/zenburn.css">
-
-	<style>
-		.audio-controls {
-			display: none;
-		}
-	</style>
-
-	<!-- Printing and PDF exports -->
-	<script>
-		var link = document.createElement('link');
-		link.rel = 'stylesheet';
-		link.type = 'text/css';
-		link.href = window.location.search.match(/print-pdf/gi) ? 'css/print/pdf.css' : 'css/print/paper.css';
-		document.getElementsByTagName('head')[0].appendChild(link);
-	</script>
+  <title>Async / Await</title>
+  <link href='https://fonts.googleapis.com/css?family=Bangers' rel='stylesheet'>
+  <link href='css/reveal.css' rel='stylesheet'>
+  <link href='css/theme/bukalapak.css' rel='stylesheet'>
+  <link href='lib/css/zenburn.css' rel='stylesheet'>
+  <script>
+    var link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.type = 'text/css';
+    link.href = window.location.search.match(/print-pdf/gi) ? 'css/print/pdf.css' : 'css/print/paper.css';
+    document.getElementsByTagName('head')[0].appendChild(link);
+  </script>
 </head>
 
 <body>
-	<div class="reveal">
-		<div class="slides">
-			<section>
-				<h1>Async (in JS)</h1>
-				<h3 class="fragment">... or Why I Need to Care?</h3>
-				<p>
-					<small>
-						by Rahadian Yusuf
-					</small>
-				</p>
-			</section>
-			<section>
-				<h2>下午好</h2>
-				<p class="fragment">
-					That means, "Good Afternoon"
-				</p>
+  <div class='reveal'>
+    <div class='slides'>
+      <section>
+        <section>
+          <h1>Async (in JS)</h1>
+          <p>
+            <small>
+              by Rahadian Yusuf
+              <br> FE TIX
+            </small>
+          </p>
+        </section>
+        <section>
+          <h2>下午好</h2>
+          <p class='fragment'>
+            That means, "Good Afternoon"
+          </p>
+          <p class='fragment' style='font-size: 18px'>according to Google Translate (duh)</p>
+          <aside class='notes'>
+            Selamat Sore!
+          </aside>
+        </section>
+        <section>
+          <h2>It's me!</h2>
+          <img alt='Me!' src='lib/me.jpg' width='400'>
+        </section>
 
-				<p class="fragment" style="font-size: 18px">according to Google Translate (duh)</p>
+        <section>
+          <p>This presentation is a synthesis of mainly materials from Asim Hussain's workshop on async JS, along with some
+            supplement materials.</p>
+        </section>
 
-				<aside class="notes">
-					Selamat Sore!
-				</aside>
-			</section>
-			<section>
-				<h2>Why Asynchronous?</h2>
-				<p class="fragment">
-					<small>according to Asim Hussein</small>
-				</p>
-				<ul>
-					<li class="fragment">Blocking is an idea we invent</li>
-					<li class="fragment">Hardware is non-blocking</li>
-					<li class="fragment">Non-blocking is better for performance.</li>
-					<li class="fragment">Therefore, async is better.</li>
-				</ul>
+        <section>
+          <h2>Let's Begin!</h2>
+          <div style='position: relative'>
+            <img alt='Ganbaru zoi!' src='lib/ganbaruzoi.png' width='500'>
+            <div class='comic' style='position: absolute; top: 40px; width: 10%; font-size: 35px; left: 238px; line-height: 1;'>
+              I'll do my best to code an async code!
+            </div>
+            <div>
+              <div style='font-size: 12px; color: #999'>&copy; Bkub Okawa &amp; Takeshobo, with modification on the dialogue.</div>
+            </div>
+          </div>
+          <p>Give your best, Popuko!</p>
+        </section>
 
-				<aside class="notes">
-					Blocking is an idea we invented to make writing software easier. CPU: Hard drive, please get me this file. (Then CPU do other
-					stuffs) (Hard drive loads the file into RAM) Hard drive: (slap) Hey, Mr. CPU, your file is ready in the RAM.
-				</aside>
-			</section>
-			<section>
-				<section>
-					<h2>How to Become Asynchronous</h2>
+      </section>
+      <section>
+        <section>
+          <pre><code class='hljs' data-trim>content = readFile('.thefile.txt');&#x000A;conn = openConnection('a', 8000);&#x000A;write(content, conn);&#x000A;close(conn);</code></pre>
+          <p class='fragment'>
+            This code is done
+            <strong>synchronously.</strong>
+          </p>
+          <aside class='notes'>
+            <p>Di ada kode.</p>
+            <p>
+              Kode di sini dijalan secara sinkronus. Artinya, eksekusi selalu berurutan selalu dari atas ke bawah.
+            </p>
+            <p>
+              Kalau misalnya ada baris atau bagian kode yang membutuh waktu yang lama untuk mengeksekusinya, kode-kode di bawahnya di-blok,
+              atau tidak dijalankan sampai baris atau bagian kode yang bersangkutan selesai.
+            </p>
+          </aside>
+        </section>
+        <section>
+          <p class='fragment'>
+            Sync code is easier to predict.
+            <small>(just line by line)</small>
+          </p>
+          <p class='fragment'>Async code is harder to understand than sync code.</p>
+          <p>
+            <span class='fragment'>Async code is harder to predict,</span>
+            <span class='fragment'>but… it betters for performance.</span>
+          </p>
+          <aside class='notes'>
+            <p>
+              Tidak dapat dipungkiri, bahwa menulis kode synchronous itu gampang dan mudah diprediksi jalan kdoenya.
+            </p>
+            <p>
+              Kalau kode yang bersifat async lebih susah dipahami ketimbang kode sync
+            </p>
+            <p>
+              Selain itu kode async juga sulit diprediksi (yang akan dijelaskan nanti), tapi performanya lebih baik.
+            </p>
+            <p>
+              Kenapa lebih baik? Ini ada kaitannya dengan...
+              <next slide>
+            </p>
+          </aside>
+        </section>
 
-					<ol>
-						<li class="fragment">Thread</li>
-						<li class="fragment">Event</li>
-					</ol>
+        <section>
+          <h2>Blocking vs Non-blocking</h2>
+        </section>
+        <section>
+          <pre><code class='hljs' data-trim>content = readFile('.thefile.txt');&#x000A;conn = openConnection('a', 8000); // this blocks execution of lines below&#x000A;write(content, conn);&#x000A;close(conn);</code></pre>
+          <aside class='notes'>
+            Mari kita lihat kodenya lagi. Kalau ada eksekusi yang membutuhkan waktu yang lama, seperti di baris dua di atas, baris-baris
+            di bawahnya harus menunggu eksekusi baris itu selesai. Dengan kata lain, baris kedua mem-blocking baris-baris
+            berikutnya.
+          </aside>
+        </section>
+        <section>
+          <h2>
+            But...
+            <span class='fragment'>blocking is an idea we invented to make writing software easier.</span>
+          </h2>
+          <p class='fragment'>Hardware is actually... non-blocking.</p>
+          <aside class='notes'>
+            <p>
+              Tapi... ada satu hal yang fakta yang mungkin mindblowing, kalau kita lupa konsep daleman komputer:
+              <next> hardware komputer tidak bloking. Kalau kita pikir-pikir, memang, CPU berinteraksi dengan I/O seperti hard disk,
+                SSD, atau internet dan beberapa perangkat periferal komputer lain dengan menggunakan interrupt, yang artinya
+                perangkat tersebut meminta CPU untuk menunda apapun yang dikerjanya sekarang dan mengerjakan program khusus
+                untuk menangani event-event yang berkaitan dengan perangkat tersebut, seperti tulis data ke file atau mengetik.
+                Prinsipnya mirip dengan event handler. Konsep blocking itu ada agar kita bisa menulis software dengan lebih
+                mudah.
+            </p>
+          </aside>
+        </section>
 
-					<aside class="notes">
-						Selamat Sore!
-					</aside>
-				</section>
-				<section>
-					<h2>How to Become Asynchronous: Thread</h2>
+        <section>
+          <h2>So, Why Asynchronous?</h2>
+          <ul>
+            <li class='fragment'>Blocking is an idea we invent</li>
+            <li class='fragment'>Hardware is non-blocking</li>
+            <li class='fragment'>Non-blocking is better for performance.</li>
+            <li class='fragment'>Therefore, async is better.</li>
+          </ul>
+          <aside class='notes'>
+            <p>Jadi, mengapa async?
+              <baca list>
+            </p>
+            <p>Selanjutnya kita akan membahas mengenai pendekatan async yang terdapat di JS.</p>
+          </aside>
+        </section>
 
-					<ol>
-						<li class="fragment">Thread are just processes with shared memory</li>
-						<li class="fragment">Shared memory => race condition</li>
-						<li class="fragment">Using locks mean deadlocks/livelocks</li>
-						<li class="fragment">When a thread block, switch to other thread.</li>
-					</ol>
+      </section>
+      <section>
+        <section data-transition='fade-out'>
+          <h2>How We Handle Asynchronous in JS</h2>
+          <p class='fragment'>
+            #1: Use Callback
+          </p>
+          <pre class='fragment'><code class='hljs' data-trim>function doAsyncTask(cb) {&#x000A;  cb();&#x000A;}&#x000A;&#x000A;doAsyncTask(_ => console.log(message));&#x000A;let message = "Callback Called";</code></pre>
+          <p class='fragment'>Make it async</p>
+          <aside class='notes'>
+            <p>Sekarang, coba tebak gimana caranya agar fungsi di atas dibuat async?
+              <wait for 10 seconds>
+            </p>
+          </aside>
+        </section>
+        <section data-transition='fade-in'>
+          <h2>How We Handle Asynchronous in JS</h2>
+          <p>
+            #1: Use Callback
+          </p>
+          <pre><code class='hljs' data-trim>function doAsyncTask(cb) {&#x000A;  setTimeout(() => {&#x000A;    console.log('Async Task Calling Callbacks');&#x000A;    cb();&#x000A;  }, 0)&#x000A;}&#x000A;&#x000A;doAsyncTask(_ => console.log(message));&#x000A;let message = "Callback Called";&#x000A;</code></pre>
+          <p class='fragment'>Callbacks are the fundamental unit of asynchrony in JS.</p>
+          <aside class='notes'>
+            <p>
+              Seperti yang dibahas di slide sebelumnya, async dihandle dengan cara memberikan suatu fungsi yang disebut callback yang tidak
+              langsung dipanggil, tapi baru dipanggil saat suatu event di-trigger. Contohnya, setTimeout dengan nilai timeout-nya
+              0 membuat callback-nya menjadi "async".
+            </p>
+          </aside>
+        </section>
 
-					<aside class="notes">
-						Threads are hard to get right! (Beware of race condition) Multi-Threading is Hard! Thread are just processes with shared
-						memory Shared memory => race condition Using locks mean deadlocks/livelocks When a thread block, switch to other thread.
-					</aside>
-				</section>
-				<section>
-					<h2>How to Become Asynchronous: Event</h2>
+        <section>
+          <h2>What if we want to sequencially call callbacks?</h2>
+        </section>
+        <section>
+          <p>
+            Well, we can
+            <strong>nest</strong>
+            next callback inside the previous callback
+          </p>
+          <pre class='fragment'><code class='hljs js' data-trim>ajax('https://www.example.com/posts/10', ({ post }) => {&#x000A;  const userId = post.user_id;&#x000A;&#x000A;  ajax(`https://www.example.com/users/${userId}`, ({ user }) => {&#x000A;    console.log('User:', user.name);&#x000A;  })&#x000A;})</code></pre>
+        </section>
+        <section>
+          <h2>But I want to call many callbacks sequencially</h2>
+        </section>
+        <section>
+          <p>
+            Well, this will lead you to...
+            <span class='fragment'>
+              <strong>callback hell!</strong>
+            </span>
+          </p>
+          <pre class='fragment'><code class='hljs js' data-trim style='font-size: 0.5em; line-height: 1.3'>function doAsyncTask(cb) {&#x000A;  setImmediate(() => {&#x000A;    console.log("Async Task Calling Callback");&#x000A;    cb();&#x000A;  });&#x000A;}&#x000A;&#x000A;// Sadarkan aku Tuhan... !&#x000A;doAsyncTask(() => {&#x000A;  doAsyncTask(() => {&#x000A;    doAsyncTask(() => {&#x000A;      doAsyncTask(() => {&#x000A;        doAsyncTask(() => {&#x000A;          doAsyncTask(() => {&#x000A;            doAsyncTask(() => {&#x000A;              doAsyncTask(() => {&#x000A;                doAsyncTask(() => {&#x000A;                  doAsyncTask(() => {});&#x000A;                });&#x000A;              });&#x000A;            });&#x000A;          });&#x000A;        });&#x000A;      });&#x000A;    });&#x000A;  });&#x000A;});</code></pre>
+          <p class='medium fragment'>
+            OK, this example is too extreme.
+          </p>
+          <aside class='notes'>
+            If we want to run callbacks in sequence, we need to nest it. It can lead to… Callback Hell!
+          </aside>
+        </section>
+        <section>
+          <div style='position: relative'>
+            <img alt='You call too many callbacks!' src='lib/yatchatta-boring.png' style='width: 448px;'>
+            <div class='comic fragment' style='position: absolute; top: 60px; width: 10%; font-size: 21px; left: 461px; line-height: 1;'>
+              You realize that your nested callback is too deep, don't you?
+            </div>
+            <div class='comic fragment' style='position: absolute; top: 356px; width: 14%; font-size: 36px; left: 433px; line-height: 1;'>
+              Well, don't you?
+            </div>
+          </div>
+          <div>
+            <div style='font-size: 12px; color: #999'>&copy; Bkub Okawa &amp; Takeshobo, with modification on the dialogue.</div>
+          </div>
+        </section>
+        <section>
+          <pre><code class='hljs' data-trim style='font-size: 0.7em; line-height: 1.3'>listen("click", handler);&#x000A;&#x000A;function handler() {&#x000A;  setTimeout(request, 500);&#x000A;}&#x000A;&#x000A;function request(){&#x000A;  ajax("http://some.url.1", response);&#x000A;}&#x000A;&#x000A;function response(text){&#x000A;  if (text == "hello") {&#x000A;    handler();&#x000A;  }&#x000A;  else if (text == "world") {&#x000A;    request();&#x000A;  }&#x000A;}</code></pre>
+          <p class='fragment'>
+            Well, this still will lead you to...
+            <span>
+              <strong>callback hell.</strong>
+            </span>
+          </p>
+          <aside class='notes'>
+            <p>Bagaimana dengan yang ini? Apakah masih terjadi callback hell? Hmm...
+              <pause> sayangnya...
+                <next fragment> callback hell masih terjadi.</p>
+            <p>Meskipun tidak ada sesuatu yang di-nested, flow jalannya program di atas tidak intuitif dengan cara kita biasa
+              membaca program. Harus dibace lompat-lompat misalnya dari atas ke bawah tersu ke atas lagi.</p>
+            <p>Kalau contoh di sini fungsi yang dijadikan callback di-hardcode ke dalam fungsi yang akan memanggilnya sebagai
+              callback. Tapi, kalau ada di suatu tahapan flow di atas yang gagal, tahapan flow-nya akan berubah tidak sesuai
+              dengan rencana. Selain itu, pola ini tidak bisa di-reusable.</p>
+          </aside>
+        </section>
+        <section>
+          <div style='position: relative'>
+            <img alt='You call too many callbacks!' src='lib/yatchatta-boring.png' style='width: 448px;'>
+            <div class='comic fragment' style='position: absolute; top: 47px; width: 10%; font-size: 21px; left: 461px; line-height: 1;'>
+              Do you realize that this code's flow is difficult to follow, don't you?
+            </div>
+            <div class='comic fragment' style='position: absolute; top: 349px; width: 10%; font-size: 27px; left: 450px; line-height: 1;'>
+              Well, can you follow it?!!
+            </div>
+          </div>
+          <div>
+            <div style='font-size: 12px; color: #999'>&copy; Bkub Okawa &amp; Takeshobo, with modification on the dialogue.</div>
+          </div>
+        </section>
+        <section>
+          <h2>Hmm... How can we avoid it?</h2>
+          <div class='fragment' style='position: relative'>
+            <img alt='...Promise' src='lib/promise.png' style='width: 70%'>
+            <div class='comic' style='    position: absolute;       top: 90px;       left: 190px;       color: #333;       font-size: 48px;'>
+              <span class='fragment'>...</span>
+              <span class='fragment'>Promise!</span>
+            </div>
+            <div style='font-size: 12px; color: #999'>&copy; Bkub Okawa &amp; Takeshobo, with modification on the dialogue.</div>
+          </div>
 
-					<pre><code class="hljs" data-trim>
-// macOS, Linux, and Windows
-fs.readFile('&lt;directory&gt;', (err, data) =&gt; {
-// =&gt; [Error: EISDIR: illegal operation on a directory, read &lt;directory&gt;]
-});
-						</code></pre>
-					<aside class="notes">
-						Threads are hard to get right! (Beware of race condition) Multi-Threading is Hard! Thread are just processes with shared
-						memory Shared memory => race condition Using locks mean deadlocks/livelocks When a thread block, switch to other thread.
-					</aside>
-				</section>
-			</section>
-			<section>
-				<h2>How We Handle Asynchronous</h2>
-				<p class="fragment">
-					#1: Use Callback
-				</p>
+        </section>
 
-				<div style="position: relative">
-					<pre class="fragment" style="position: absolute">
-									<code class="hljs" data-trim>
-			// Make it async
-			function doAsyncTask(cb) {
-			  cb();
-			}
-			
-			doAsyncTask(_ => console.log(message));
-			let message = "Callback Called";
-									</code>
-								</pre>
+      </section>
+      <section>
+        <section>
+          <h2>
+            Promise
+          </h2>
+          <ul>
+            <li class='fragment'>
+              In ES6 we have an alternative mechanism built into the language called a
+              <em>promise</em>.
+            </li>
+            <li class='fragment'>
+              A promise is a
+              <em>placeholder</em>
+              for a future value. It serves the same function as callbacks but has a nicer syntax and makes it easier to handle errors.
+            </li>
+          </ul>
+        </section>
 
-					<pre class="fragment" style="position: absolute">
-									<code class="hljs" data-trim>
-			// Make it async with setImmediate
-			function doAsyncTask(cb) {
-			  setImmediate(() => {
-			    console.log('Async Task Calling Callbacks');
-			    cb();
-			  })
-			}
-			
-			doAsyncTask(_ => console.log(message));
-			let message = "Callback Called";
-									</code>
-								</pre>
-				</div>
-				<aside class="notes">
-					Coba tanpa pindahinn variabel message -nya
-				</aside>
-			</section>
-			<section>
-				<h2>What if we want to sequencially call callbacks?</h2>
-			</section>
-			<section>
-				<h2>Callback Hell!</h2>
+        <section>
+          <h2>
+            Promise
+          </h2>
+          <pre><code class='hljs' data-trim>function doAsyncTask() {&#x000A;  // -- NOTE: Not passing in a callback&#x000A;  const error = false;&#x000A;&#x000A;  const promise = new Promise((resolve, reject) => {&#x000A;    setTimeout(() => {&#x000A;      if (error) {                // -- If error exists&#x000A;        reject('Error happens');  // -- Rejecting&#x000A;      } else {&#x000A;        console.log("Async Work Complete");&#x000A;        resolve(24); // -- Resolving&#x000A;      }&#x000A;    }, 1000);&#x000A;  });&#x000A;  return promise; // -- Return the promise&#x000A;}</code></pre>
+          <aside class='notes'>
+            Kira-kira ini adalah contoh penggunaan Promise. Kita bisa menentukan kapan fungsinya ter-resolve (atau selesai dengan sukses)
+            atau ter-reject (gagal). Kita bisa meneruskan nilainya ke rantai selanjutnya dengan menambahkan parameter berupa
+            nilai yang ingin diteruskan ke dalam fungsi resolve atau reject.
+          </aside>
+        </section>
 
-				<pre class="fragment">
-					<code class="hljs js" data-trim>
+        <section>
+          <div data-markdown>
+            We can get notified when a promise `resolves` by attaching a _success_ handler to its `then` function, like so:
+          </div>
+          <pre><code class='hljs' data-trim>doAsyncTask().then(() => console.log("Task Complete!"));</code></pre>
+        </section>
+        <section>
+          <div data-markdown>
+            `then` can take two arguments, the second argument is a _error_ handler that gets called if the promise is `rejected`, like
+            so:
+          </div>
+          <pre><code class='hljs' data-trim>doAsyncTask().then(&#x000A;  () => console.log("Task Complete!"),&#x000A;  () => console.log("Task Errored!")&#x000A;);</code></pre>
+        </section>
 
-    function doAsyncTask(cb) {
-      setImmediate(() => {
-        console.log("Async Task Calling Callback");
-        cb();
-      });
-    }
-    
-    // Sadarkan aku Tuhan... !
-    doAsyncTask(() => {
-      doAsyncTask(() => {
-        doAsyncTask(() => {
-          doAsyncTask(() => {
-            doAsyncTask(() => {
-              doAsyncTask(() => {
-                doAsyncTask(() => {
-                  doAsyncTask(() => {
-                    doAsyncTask(() => {
-                      doAsyncTask(() => {});
-                    });
-                  });
-                });
-              });
-            });
-          });
-        });
-      });
+        <section>
+          <div data-markdown>
+            The `catch` function works exactly the same way as the `then` error handler, it's just clearer and more explicitly describes
+            our intent to handle errors.
+          </div>
+          <pre><code class='hljs' data-trim>doAsyncTask()&#x000A;  .then(() => console.log("Task Complete!"))&#x000A;  .catch(() => console.log("Task Errored!"))</code></pre>
+        </section>
+
+        <section>
+          <h2>
+            Promise: The Chaining
+          </h2>
+          <p class='fragment' data-markdown>
+            We can also connect a series of `then` handlers together in a chain, like so:
+          </p>
+          <pre class='fragment'><code class='hljs' data-trim>const prom = Promise.resolve("done");&#x000A;&#x000A;prom.then(val => {&#x000A;  console.log(val);&#x000A;  return "done2"; // -- !NOTE: We have to return something,&#x000A;                  //            otherwise it doesn't get passed&#x000A;}).then(val => console.log(val));</code></pre>
+          <aside class='notes'>
+            Nah, sebelumnya dibilang bahwa kita bisa meneruskan suatu nilai ke rantai promise selanjutnya. Nilai tersebut kemudian di-pass
+            sebagai parameter dalam callback di dalam method then.
+          </aside>
+        </section>
+
+        <section>
+          <h2>Remember the "Callback Hell"?</h2>
+          <p class='fragment'>Let's rewrite it with promise</p>
+          <pre class='fragment'><code class='hljs js' data-trim>function doAsyncTask(cb) {&#x000A;  return new Promise((resolve) => {&#x000A;    setImmediate(() => {&#x000A;      console.log("Async Task Calling Callback");&#x000A;      resolve();&#x000A;    });&#x000A;  })&#x000A;}&#x000A;&#x000A;doAsyncTask()&#x000A;  .then(doAsyncTask)&#x000A;  .then(doAsyncTask)&#x000A;  .then(doAsyncTask)&#x000A;  .then(doAsyncTask)&#x000A;  .then(doAsyncTask)&#x000A;  .then(doAsyncTask)&#x000A;  .then(doAsyncTask)&#x000A;  .then(doAsyncTask)&#x000A;  .then(doAsyncTask)&#x000A;  .then(() => {})</code></pre>
+        </section>
+
+        <section>
+          <p>Some useful Promise functions:</p>
+          <ul>
+            <li class='fragment'>
+              <code>Promise.finally</code> (in preview)
+              <p class='small'>
+                <a href='https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/finally'>
+                  https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/finally
+                </a>
+              </p>
+            </li>
+            <li class='fragment'>
+              <code>Promise.all</code>
+            </li>
+            <li class='fragment'>
+              <code>Promise.race</code>
+              <p class='medium'>Resolves or rejects when the first promise in the array resolved or rejects</p>
+            </li>
+          </ul>
+        </section>
+
+      </section>
+      <section>
+        <section>
+          <h2>async / await</h2>
+        </section>
+        <section>
+          <p>When using promises we attach a then</p>
+          <pre class='fragment'><code class='hljs' data-trim>const doAsyncTask = () => Promise.resolve("done");&#x000A;doAsyncTask().then(val => console.log(val));&#x000A;console.log("here"); // -- this is called first!</code></pre>
+        </section>
+        <section>
+          <p>When using async/await...</p>
+          <pre class='fragment'><code class='hljs' data-trim>const doAsyncTask = () => Promise.resolve("done");&#x000A;async function runMe() {&#x000A;  // -- mark it as `async`&#x000A;  let value = await doAsyncTask(); // -- Don't need to call .then&#x000A;  console.log(value);  //----> This waits before it's printed&#x000A;}&#x000A;runMe();</code></pre>
+          <p class='fragment' data-markdown>When a promise with `await` is run, it _pauses_ until the promise is resolved.</p>
+          <aside class='notes'>
+            When using async/await we don't need to attach a then
+          </aside>
+        </section>
+
+        <section>
+          <p>Interestingly, an async function returns a ...</p>
+          <div class='fragment' style='position: relative'>
+            <img alt='...Promise' src='lib/promise.png' style='width: 70%'>
+            <div class='comic' style='    position: absolute;       top: 90px;       left: 190px;       color: #333;       font-size: 48px;'>
+              <span class='fragment'>...</span>
+              <span class='fragment'>Promise!</span>
+            </div>
+            <div style='font-size: 12px; color: #999'>&copy; Bkub Okawa &amp; Takeshobo, with modification on the dialogue.</div>
+          </div>
+
+        </section>
+        <section>
+          <p data-markdown>`async` function returns a Promise</p>
+          <pre><code class='hljs' data-trim>const doAsyncTask = () => Promise.resolve("done");&#x000A;async function runMe() {&#x000A;  // -- mark it as `async`&#x000A;  let value = await doAsyncTask(); // -- Don't need to call .then&#x000A;  console.log(value);  //----> This waits before it's printed&#x000A;}&#x000A;runMe().then(() => console.log('Task Completed'))</code></pre>
+        </section>
+        <section>
+          <p>We can also use existing promise inside async function</p>
+          <pre><code class='hljs' data-trim>const doAsyncTask = () => Promise.resolve("done"); // <-- isn't it a promise?&#x000A;async function runMe() {&#x000A;  // -- mark it as `async`&#x000A;  let value = await doAsyncTask(); // -- Don't need to call .then&#x000A;  console.log(value);  //----> This waits before it's printed&#x000A;}&#x000A;runMe().then(() => console.log('Task Completed'))</code></pre>
+        </section>
+
+        <section>
+          <h2>How about error handling?</h2>
+          <p class='fragment' data-markdown>
+            With `async`, we can use `try/catch`, the catch value is what was returned in the reject.
+          </p>
+          <pre class='fragment'><code class='hljs js' data-trim>const doAsyncTask = () => Promise.reject("error");&#x000A;const asyncFunction = async function() {&#x000A;  try {&#x000A;    const value = await doAsyncTask();&#x000A;  } catch (e) {&#x000A;    console.error(e);&#x000A;    return;&#x000A;  }&#x000A;};&#x000A;asyncFunction();</code></pre>
+        </section>
+
+        <section>
+          <p>
+            Async / Await syntax make writing async code easier...
+            <span class='fragment'>by making writing the code similar writing sync code.</span>
+          </p>
+          <p class='fragment'>Remember, blocking rest of code (until it finishes) is possible inside async function.</p>
+        </section>
+        <section>
+          <p>
+            But...
+            <span class='fragment'>
+              since it's blocking, it can be
+              <em>inefficient,</em>
+              take for example the act of loading multiple files
+            </span>
+          </p>
+          <pre class='fragment'><code class='hljs' data-trim>const util = require("util");&#x000A;const fs = require("fs");&#x000A;const readFile = util.promisify(fs.readFile);&#x000A;&#x000A;const files = ["./files/demofile.txt", "./files/demofile.other.txt"];&#x000A;&#x000A;(async () => {&#x000A;  for (let name of files) {&#x000A;    console.log(await readFile(name, "utf8")); // The problem!&#x000A;  }&#x000A;})();</code></pre>
+          <p class='fragment'>One file loaded at a time, instead of all files at once</p>
+        </section>
+        <section>
+          <div style='position: relative'>
+            <img alt='You call too many callbacks!' src='lib/yatchatta-boring.png' style='width: 448px;'>
+            <div class='comic' style='position: absolute; top: 60px; width: 10%; font-size: 21px; left: 461px; line-height: 1;'>
+              You realize that you abuse the async function, don't you?
+            </div>
+            <div class='comic' style='position: absolute; top: 356px; width: 14%; font-size: 36px; left: 433px; line-height: 1;'>
+              Well, don't you?
+            </div>
+          </div>
+          <div>
+            <div style='font-size: 12px; color: #999'>&copy; Bkub Okawa &amp; Takeshobo, with modification on the dialogue.</div>
+          </div>
+        </section>
+        <section>
+          <p>I fell sorry to Popuko</p>
+        </section>
+        <section>
+          <p>This is better:</p>
+          <pre class='fragment'><code class='hljs js' data-trim style='font-size: 0.7em; line-height: 1.3'>const util = require("util");&#x000A;const fs = require("fs");&#x000A;const readFile = util.promisify(fs.readFile);&#x000A;&#x000A;const files = ["./files/demofile.txt", "./files/demofile.other.txt"];&#x000A;&#x000A;(async () => {&#x000A;  // Wait for all files to be read simultaneously until all finish&#x000A;  const fileData = await Promise.all(files.map(name => readFile(name, "utf8")));&#x000A;  for (let data of fileData) {&#x000A;    console.log(data);&#x000A;  }&#x000A;})();</code></pre>
+        </section>
+
+      </section>
+      <section>
+        <section>
+          <h2>FIN</h2>
+        </section>
+
+      </section>
+    </div>
+  </div>
+  <script src='lib/js/head.min.js'></script>
+  <script src='js/reveal.js'></script>
+  <script>
+    // More info about config & dependencies:
+    // - https://github.com/hakimel/reveal.js#configuration
+    // - https://github.com/hakimel/reveal.js#dependencies
+    Reveal.initialize({
+      transition: 'fade-in',
+      slideNumber: true,
+      dependencies: [
+        { src: 'plugin/markdown/marked.js' },
+        { src: 'plugin/markdown/markdown.js' },
+        { src: 'plugin/notes/notes.js', async: true },
+        { src: 'plugin/highlight/highlight.js', async: true, callback: function () { hljs.initHighlightingOnLoad(); } },
+        // { src: 'plugin/audio-slideshow/slideshow-recorder.js', condition: function () { return !!document.body.classList; } },
+        // { src: 'plugin/audio-slideshow/audio-slideshow.js', condition: function () { return !!document.body.classList; } },
+      ],
+      // audio: {
+      //   autoplay: true,
+      // }
     });
-					</code>
-				</pre>
-				<aside class="notes">
- 					If we want to run callbacks in sequence, we need to nest it. It can lead to… Callback Hell!
-				</aside>
-			</section>
-		</div>
-	</div>
-
-	<script src="lib/js/head.min.js"></script>
-	<script src="js/reveal.js"></script>
-
-	<script>
-		// More info about config & dependencies:
-		// - https://github.com/hakimel/reveal.js#configuration
-		// - https://github.com/hakimel/reveal.js#dependencies
-		Reveal.initialize({
-			dependencies: [
-				{ src: 'plugin/markdown/marked.js' },
-				{ src: 'plugin/markdown/markdown.js' },
-				{ src: 'plugin/notes/notes.js', async: true },
-				{ src: 'plugin/highlight/highlight.js', async: true, callback: function () { hljs.initHighlightingOnLoad(); } },
-				// { src: 'plugin/audio-slideshow/slideshow-recorder.js', condition: function () { return !!document.body.classList; } },
-				// { src: 'plugin/audio-slideshow/audio-slideshow.js', condition: function () { return !!document.body.classList; } },
-			],
-			// audio: {
-			// 	autoplay: true,
-			// }
-		});
-	</script>
+  </script>
 </body>
 
 </html>
